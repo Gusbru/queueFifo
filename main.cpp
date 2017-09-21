@@ -3,10 +3,20 @@
 //
 
 #include <iostream>
+#include "Process.h"
+#include "Insert.h"
 
 int main(int argc, char *argv[]) {
 
-    std::cout << "Hello world" << std::endl;
+    time_t timeCreation;
+    Process *firstElement = nullptr;
+    Process *lastElement = nullptr;
+
+    std::cout << insert(&firstElement, &lastElement, 494) << std::endl;
+    std::cout << insert(&firstElement, &lastElement, 304) << std::endl;
+
+    std::cout << firstElement->getNext()->getId() << std::endl;
 
     return 0;
 }
+
