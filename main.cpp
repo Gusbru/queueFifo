@@ -5,17 +5,27 @@
 #include <iostream>
 #include "Process.h"
 #include "Insert.h"
+#include "Remove.h"
 
 int main(int argc, char *argv[]) {
 
-    time_t timeCreation;
-    Process *firstElement = nullptr;
-    Process *lastElement = nullptr;
+    time_t timeStart;
+    Process *firstProcess = nullptr;
+    Process *lastProcess = nullptr;
 
-    std::cout << insert(&firstElement, &lastElement, 494) << std::endl;
-    std::cout << insert(&firstElement, &lastElement, 304) << std::endl;
+    time(&timeStart);
+    std::cout << insert(&firstProcess, &lastProcess, 494) << std::endl;
+    std::cout << insert(&firstProcess, &lastProcess, 304) << std::endl;
 
-    std::cout << firstElement->getNext()->getId() << std::endl;
+
+    std::cout << firstProcess->getId() << std::endl;
+    std::cout << firstProcess->getNext()->getId() << std::endl;
+
+    remove(&firstProcess);
+    remove(&firstProcess);
+    remove(&firstProcess);
+
+    std::cout << firstProcess->getId() << std::endl;
 
     return 0;
 }
