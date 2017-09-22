@@ -16,3 +16,5 @@ Process::~Process() = default;
 void Process::setNext(Process *next) {
     this->next = next;
 }
+
+Process::Process() = default;

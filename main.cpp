@@ -11,6 +11,7 @@
 #include "Process.h"
 #include "Insert.h"
 #include "Remove.h"
+#include "Queues.h"
 
 int main(int argc, char *argv[]) {
 
@@ -20,21 +21,50 @@ int main(int argc, char *argv[]) {
 
     int nServers = 10;
     int nQueues = 10;
-    int nSteps = 1000;
+    int nSteps = 10;
+
+
+    // Creating an array of queues
+    Queues **availableQueues = new Queues *[nQueues];
+    for (int i = 0; i < nQueues; ++i) {
+        availableQueues[i] = new Queues(i, 1, nullptr, nullptr);
+        if (availableQueues[i] == nullptr) exit(EXIT_FAILURE);
+    }
+
+
+
 
     // serverRate
     // processRate
 
     time(&timeStart);
 
+    // cada passo da simulacao (a cada "segundo")
     for (int i = 0; i < nSteps; ++i) {
-        // create new process
+
+        // Para cada uma das filas, create new processes (pode ser diferente para cada fila)
         for (int j = 0; j < nQueues; ++j) {
-            insert(&firstProcess, &lastProcess, j);
+            // TODO: insert the creation process rate
+            int addProcess = insert(&firstProcess, &lastProcess, i+j);
+            if (addProcess == 1) {
+                availableQueues[j]->setFirstProcess(firstProcess);
+                availableQueues[j]->setLastProcess(lastProcess);
+            }
         }
+
+        // Para cada um dos servidores, executa os processos correspondentes
         // server request
-        for (int k = 0; k < nServers; ++k) {
-            remove(&firstProcess);
+        //for (int k = 0; k < nServers; ++k) {
+        //    remove(&firstProcess);
+        //}
+    }
+
+    for (int i = 0; i < nQueues; ++i) {
+        Process *currentProcess;
+        currentProcess = availableQueues[i]->getFirstProcess();
+        while (currentProcess != nullptr) {
+            std::cout << "we are at queue id = " << i << " and the currentProcess has id = " << currentProcess->getId() << std::endl;
+            currentProcess = currentProcess->getNext();
         }
     }
 

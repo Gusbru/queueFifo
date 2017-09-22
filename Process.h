@@ -10,6 +10,7 @@
 
 class Process {
 public:
+    Process();
     Process(int id, time_t creationTime, Process *next);
     ~Process();
 
