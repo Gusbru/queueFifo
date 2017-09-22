@@ -31,13 +31,10 @@ int main(int argc, char *argv[]) {
         if (availableQueues[i] == nullptr) exit(EXIT_FAILURE);
     }
 
-
-
-
     // serverRate
     // processRate
 
-    time(&timeStart);
+    //time(&timeStart);
 
     // cada passo da simulacao (a cada "segundo")
     for (int i = 0; i < nSteps; ++i) {
@@ -45,7 +42,13 @@ int main(int argc, char *argv[]) {
         // Para cada uma das filas, create new processes (pode ser diferente para cada fila)
         for (int j = 0; j < nQueues; ++j) {
             // TODO: insert the creation process rate
+            firstProcess = availableQueues[j]->getFirstProcess();
+            lastProcess = availableQueues[j]->getLastProcess();
             int addProcess = insert(&firstProcess, &lastProcess, i+j);
+
+
+
+            std::cout << "step = " << i << " - add element id = " << i+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
             if (addProcess == 1) {
                 availableQueues[j]->setFirstProcess(firstProcess);
                 availableQueues[j]->setLastProcess(lastProcess);
@@ -54,9 +57,12 @@ int main(int argc, char *argv[]) {
 
         // Para cada um dos servidores, executa os processos correspondentes
         // server request
-        //for (int k = 0; k < nServers; ++k) {
-        //    remove(&firstProcess);
-        //}
+        for (int k = 0; k < nServers; ++k) {
+
+            //remove(&firstProcess);
+              // pegar o tempo na remocao
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     for (int i = 0; i < nQueues; ++i) {
