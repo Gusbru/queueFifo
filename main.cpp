@@ -23,12 +23,13 @@ int main(int argc, char *argv[]) {
     int nServers;
     int nQueues;
 
+    //*************************************************************
+    // TODO: implement read input file. Read some user preferences
     nServers = nQueues = 10;
-
     int nSteps = 10;
-
-    int processCreationRate = 1;
-    int processDestructionRate = 1;
+    int processCreationRate = 1;        // how many process to be create in a specific queue per second (minimum 1)
+    int processDestructionRate = 1;     // how many process to be processed in a specific queue per second (minimum 1)
+    //*************************************************************
 
     // Creating an array of queues
     Queues **availableQueues = new Queues *[nQueues];
@@ -49,68 +50,48 @@ int main(int argc, char *argv[]) {
 
         // Para cada uma das filas, create new processes (pode ser diferente para cada fila)
         for (int j = 0; j < nQueues; ++j) {
-            // TODO: insert the creation process rate
-            firstProcess = availableQueues[j]->getFirstProcess();
-            lastProcess = availableQueues[j]->getLastProcess();
-            int addProcess = insert(&firstProcess, &lastProcess, time+j);
 
-            std::cout << "add element id = " << time+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
-            if (addProcess == 1) {
-                availableQueues[j]->setFirstProcess(firstProcess);
-                availableQueues[j]->setLastProcess(lastProcess);
-                availableServers[j]->setProcessToServe(firstProcess);
+            for (int k = 0; k < processCreationRate; ++k) {
+                firstProcess = availableQueues[j]->getFirstProcess();
+                lastProcess = availableQueues[j]->getLastProcess();
+                int addProcess = insert(&firstProcess, &lastProcess, time+j);
+
+                if (addProcess == 1) {
+                    availableQueues[j]->setFirstProcess(firstProcess);
+                    availableQueues[j]->setLastProcess(lastProcess);
+                    availableServers[j]->setProcessToServe(firstProcess);
+                }
+                std::cout << "add element id = " << time+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
             }
+
+
         }
         // Para cada um dos servidores, executa os processos correspondentes
         // server request
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
         for (int j = 0; j < nServers; ++j) {
-            // TODO: insert the server process rate
-            firstProcess = availableServers[j]->getProcessToServe();
-            //int removeProcess = remove(&firstProcess);
-            //if (removeProcess == 1) {
-                //availableQueues[j]->setFirstProcess(firstProcess);
-                //availableQueues[j]->setLastProcess(lastProcess);
-                //availableServers[j]->setProcessToServe(firstProcess);
-            //}
-            //std::cout << "server id = " << j << " removed the process id = " << removeProcess << " from queue id = " << availableQueues[j]->getId() << std::endl;
-            // pegar o tempo na remocao
+
+            for (int k = 0; k < processDestructionRate; ++k) {
+                firstProcess = availableServers[j]->getProcessToServe();
+                // pegar o tempo na remocao
+                time_t removalTime;
+                std::time(&removalTime);
+                double lifetime = difftime(removalTime, firstProcess->getCreationTime());
+                int removeProcess = remove(&firstProcess);
+                if (removeProcess == 1) {
+                    availableQueues[j]->setFirstProcess(firstProcess);
+                    availableQueues[j]->setLastProcess(lastProcess);
+                    availableServers[j]->setProcessToServe(firstProcess);
+                }
+                std::cout << "server id = " << j << " removed the process id = " << removeProcess << " from queue id = " << availableQueues[j]->getId() << " process lifetime = " << lifetime << std::endl;
+            }
+
         }
-
-
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
-
-    for (int i = 0; i < nQueues; ++i) {
-        Process *currentProcess;
-        currentProcess = availableQueues[i]->getFirstProcess();
-        while (currentProcess != nullptr) {
-            std::cout << "we are at queue id = " << i << " and the currentProcess has id = " << currentProcess->getId() << std::endl;
-            currentProcess = currentProcess->getNext();
-        }
-    }
-
-    std::cout << insert(&firstProcess, &lastProcess, 494) << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::cout << insert(&firstProcess, &lastProcess, 304) << std::endl;
-
-    time_t timeFinal = lastProcess->getCreationTime();
-
-    double elapsedTime;
-
-    elapsedTime = difftime(timeFinal, timeStart);
-
-    std::cout << "It took " << elapsedTime << " seconds" << std::endl;
-
-    std::cout << firstProcess->getId() << std::endl;
-    std::cout << firstProcess->getNext()->getId() << std::endl;
-
-    remove(&firstProcess);
-    remove(&firstProcess);
-    remove(&firstProcess);
-
-    std::cout << firstProcess->getId() << std::endl;
 
     return 0;
 }
