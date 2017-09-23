@@ -64,7 +64,6 @@ int main(int argc, char *argv[]) {
                 std::cout << "add element id = " << time+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
             }
 
-
         }
         // Para cada um dos servidores, executa os processos correspondentes
         // server request
