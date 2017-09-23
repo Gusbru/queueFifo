@@ -33,6 +33,9 @@ int main(int argc, char *argv[]) {
 
     Output output;
 
+    int *controlQueues = new int [nQueues];
+    int *controlServers = new int [nServers];
+
     // Creating an array of queues
     Queues **availableQueues = new Queues *[nQueues];
     for (int i = 0; i < nQueues; ++i) {
@@ -59,6 +62,7 @@ int main(int argc, char *argv[]) {
                 int addProcess = insert(&firstProcess, &lastProcess, time+j);
 
                 if (addProcess == 1) {
+                    controlQueues[j] += 1;
                     availableQueues[j]->setFirstProcess(firstProcess);
                     availableQueues[j]->setLastProcess(lastProcess);
                     availableServers[j]->setProcessToServe(firstProcess);
@@ -66,21 +70,20 @@ int main(int argc, char *argv[]) {
                 std::cout << "add element id = " << time+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
             }
 
-        }
-        // Para cada um dos servidores, executa os processos correspondentes
-        // server request
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        for (int j = 0; j < nServers; ++j) {
-
+            // Para cada um dos servidores, executa os processos correspondentes
+            // server request
             for (int k = 0; k < processDestructionRate; ++k) {
                 firstProcess = availableServers[j]->getProcessToServe();
                 // pegar o tempo na remocao
                 time_t removalTime;
                 std::time(&removalTime);
                 double lifetime = difftime(removalTime, firstProcess->getCreationTime());
+
                 int removeProcess = remove(&firstProcess);
+
                 if (removeProcess == 1) {
                     availableQueues[j]->setFirstProcess(firstProcess);
                     availableQueues[j]->setLastProcess(lastProcess);
@@ -90,6 +93,11 @@ int main(int argc, char *argv[]) {
             }
 
         }
+
+        for (int i = 0; i < nQueues; ++i) {
+            std::cout << "Q" << i << ": " << controlQueues[i] << " process" << std::endl;
+        }
+
 
         //output.printQueuesLength(*availableQueues, nQueues);
 
