@@ -1,6 +1,6 @@
 {
   "nServers" : 10,
   "nSteps" : 10,
-  "processCreationRate" : 1,
+  "processCreationRate" : 3,
   "processDestructionRate" : 1
 }

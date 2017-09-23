@@ -14,13 +14,14 @@
 #include "Queues.h"
 #include "Servers.h"
 #include "Input.h"
+#include "Output.h"
 
 int main(int argc, char *argv[]) {
 
     Process *firstProcess = nullptr;
     Process *lastProcess = nullptr;
 
-    
+
     // Read user preferences
     Input input;
     input.getInp(argv[1]);
@@ -29,6 +30,8 @@ int main(int argc, char *argv[]) {
     int nSteps = input.getNSteps();
     int processCreationRate = input.getProcessCreationRate();           // how many process to be create in a specific queue per second (minimum 1)
     int processDestructionRate = input.getProcessDestructionRate();     // how many process to be processed in a specific queue per second (minimum 1)
+
+    Output output;
 
     // Creating an array of queues
     Queues **availableQueues = new Queues *[nQueues];
@@ -88,8 +91,12 @@ int main(int argc, char *argv[]) {
 
         }
 
+        //output.printQueuesLength(*availableQueues, nQueues);
+
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
+
+    std::cout << "Program finished!" << std::endl;
 
     return 0;
 }
