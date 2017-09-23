@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
         for (int j = 0; j < nQueues; ++j) {
 
             for (int k = 0; k < processCreationRate; ++k) {
+                std::cout << "creating " << k << std::endl;
                 firstProcess = availableQueues[j]->getFirstProcess();
                 lastProcess = availableQueues[j]->getLastProcess();
                 int addProcess = insert(&firstProcess, &lastProcess, time+j);
@@ -70,12 +71,15 @@ int main(int argc, char *argv[]) {
                 std::cout << "add element id = " << time+j << " at queue id = " << j << " at time = " << lastProcess->getCreationTime() << std::endl;
             }
 
+            std::cout << "Q" << j << " now have new processes" << std::endl;
+
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 
             // Para cada um dos servidores, executa os processos correspondentes
             // server request
             for (int k = 0; k < processDestructionRate; ++k) {
+                std::cout << "destructing " << k << std::endl;
                 firstProcess = availableServers[j]->getProcessToServe();
                 // pegar o tempo na remocao
                 time_t removalTime;
@@ -91,6 +95,8 @@ int main(int argc, char *argv[]) {
                 }
                 std::cout << "server id = " << j << " removed the process id = " << removeProcess << " from queue id = " << availableQueues[j]->getId() << " process lifetime = " << lifetime << std::endl;
             }
+
+
 
         }
 
