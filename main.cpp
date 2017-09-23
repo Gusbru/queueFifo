@@ -13,23 +13,22 @@
 #include "Remove.h"
 #include "Queues.h"
 #include "Servers.h"
+#include "Input.h"
 
 int main(int argc, char *argv[]) {
 
-    time_t timeStart;
     Process *firstProcess = nullptr;
     Process *lastProcess = nullptr;
 
-    int nServers;
-    int nQueues;
-
-    //*************************************************************
-    // TODO: implement read input file. Read some user preferences
-    nServers = nQueues = 10;
-    int nSteps = 10;
-    int processCreationRate = 1;        // how many process to be create in a specific queue per second (minimum 1)
-    int processDestructionRate = 1;     // how many process to be processed in a specific queue per second (minimum 1)
-    //*************************************************************
+    
+    // Read user preferences
+    Input input;
+    input.getInp(argv[1]);
+    int nServers = input.getNServers();
+    int nQueues = input.getNQueues();
+    int nSteps = input.getNSteps();
+    int processCreationRate = input.getProcessCreationRate();           // how many process to be create in a specific queue per second (minimum 1)
+    int processDestructionRate = input.getProcessDestructionRate();     // how many process to be processed in a specific queue per second (minimum 1)
 
     // Creating an array of queues
     Queues **availableQueues = new Queues *[nQueues];
