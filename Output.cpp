@@ -7,16 +7,17 @@
 
 void Output::printQueuesLength(Queues *availableQueues, int nQueues) {
 
-
-
-    std::cout << "printing output " << nQueues << std::endl;
+    int length;
+    Process *currentProcess;
 
     for (int i = 0; i < nQueues; ++i) {
-        int length = 0;
-        std::cout << i << std::endl;
-        Process *currentProcess = availableQueues[i].getFirstProcess();
+
+        length = 0;
+        currentProcess = availableQueues[i].getFirstProcess();
+
         while (currentProcess != nullptr){
             length += 1;
+            std::cout << length << std::endl;
             currentProcess = currentProcess->getNext();
         }
 
