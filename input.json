@@ -3,5 +3,6 @@
   "nSteps" : 10,
   "processCreationRate" : 3,
   "processDestructionRate" : 1,
+  "queueInitialLength" : 7,
   "outputLevel" : 0
 }

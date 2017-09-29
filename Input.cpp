@@ -37,6 +37,9 @@ void Input::getInp(char *input) {
     assert(d.HasMember("processDestructionRate"));
     assert(d["processDestructionRate"].IsInt());
 
+    assert(d.HasMember("queueInitialLength"));
+    assert(d["queueInitialLength"].IsInt());
+
     assert(d.HasMember("outputLevel"));
     assert(d["outputLevel"].IsInt());
 
@@ -45,6 +48,7 @@ void Input::getInp(char *input) {
     nSteps = d["nSteps"].GetInt();
     processCreationRate = d["processCreationRate"].GetInt();
     processDestructionRate = d["processDestructionRate"].GetInt();
+    queueInitialLength = d["queueInitialLength"].GetInt();
     outputLevel = d["outputLevel"].GetInt();
 
 }
@@ -71,5 +75,9 @@ int Input::getProcessDestructionRate() {
 
 int Input::getOutputLevel() {
     return outputLevel;
+}
+
+int Input::getQueueInitialLength() {
+    return queueInitialLength;
 }
 
