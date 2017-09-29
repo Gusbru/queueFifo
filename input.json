@@ -2,5 +2,6 @@
   "nServers" : 10,
   "nSteps" : 10,
   "processCreationRate" : 3,
-  "processDestructionRate" : 1
+  "processDestructionRate" : 1,
+  "outputLevel" : 0
 }

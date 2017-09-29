@@ -26,22 +26,26 @@ void Input::getInp(char *input) {
     assert(d.IsObject());
 
     assert(d.HasMember("nServers"));
-    assert(d["nSteps"].IsInt());
+    assert(d["nServers"].IsInt());
 
     assert(d.HasMember("nSteps"));
     assert(d["nSteps"].IsInt());
 
     assert(d.HasMember("processCreationRate"));
-    assert(d["nSteps"].IsInt());
+    assert(d["processCreationRate"].IsInt());
 
     assert(d.HasMember("processDestructionRate"));
-    assert(d["nSteps"].IsInt());
+    assert(d["processDestructionRate"].IsInt());
+
+    assert(d.HasMember("outputLevel"));
+    assert(d["outputLevel"].IsInt());
 
     nServers = d["nServers"].GetInt();
     nQueues = nServers;
     nSteps = d["nSteps"].GetInt();
     processCreationRate = d["processCreationRate"].GetInt();
     processDestructionRate = d["processDestructionRate"].GetInt();
+    outputLevel = d["outputLevel"].GetInt();
 
 }
 
@@ -64,3 +68,8 @@ int Input::getProcessCreationRate() {
 int Input::getProcessDestructionRate() {
     return processDestructionRate;
 }
+
+int Input::getOutputLevel() {
+    return outputLevel;
+}
+

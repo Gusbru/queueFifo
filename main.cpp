@@ -121,18 +121,8 @@ int main(int argc, char *argv[]) {
 
         }
 
-        // control queue length
-//        for (int i = 0; i < nQueues; ++i) {
-//            std::cout << "Q" << i << ": ";
-//            for (int j = 0; j < controlQueues[i]; ++j) {
-//                std::cout << "#";
-//            }
-//            std::cout << std::endl;
-//        }
         output.printQueuesLength(controlQueues, nQueues);
 
-
-        //output.printQueuesLength(*availableQueues, nQueues);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         std::cout << "********************************************************************" << std::endl << std::endl;

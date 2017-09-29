@@ -13,6 +13,7 @@ public:
     int getNSteps();
     int getProcessCreationRate();
     int getProcessDestructionRate();
+    int getOutputLevel();
 
 private:
     int nServers;
@@ -20,6 +21,7 @@ private:
     int nSteps;
     int processCreationRate;
     int processDestructionRate;
+    int outputLevel;
 };
 
 
