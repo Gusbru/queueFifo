@@ -10,7 +10,7 @@
 
 class Output {
 public:
-    void printQueuesLength(Queues *availableQueues, int nQueues);
+    void printQueuesLength(int *controlQueues, int nQueues);
 
 };
 

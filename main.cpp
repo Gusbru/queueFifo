@@ -121,9 +121,15 @@ int main(int argc, char *argv[]) {
 
         }
 
-        for (int i = 0; i < nQueues; ++i) {
-            std::cout << "Q" << i << ": " << controlQueues[i] << " process" << std::endl;
-        }
+        // control queue length
+//        for (int i = 0; i < nQueues; ++i) {
+//            std::cout << "Q" << i << ": ";
+//            for (int j = 0; j < controlQueues[i]; ++j) {
+//                std::cout << "#";
+//            }
+//            std::cout << std::endl;
+//        }
+        output.printQueuesLength(controlQueues, nQueues);
 
 
         //output.printQueuesLength(*availableQueues, nQueues);
