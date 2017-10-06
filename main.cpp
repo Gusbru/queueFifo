@@ -35,10 +35,7 @@ int main(int argc, char *argv[]) {
 
     Output output;
 
-    int *controlQueues = new int [nQueues];
-    for (int l = 0; l < nQueues; ++l) {
-        controlQueues[l] = queueInitialLength;
-    }
+
 
     // Creating an array for queues and servers (nQueues == nServers)
     Queues **availableQueues = new Queues *[nQueues];
@@ -48,6 +45,28 @@ int main(int argc, char *argv[]) {
         availableServers[i] = new Servers(i, processDestructionRate, nullptr);
         if (availableQueues[i] == nullptr || availableServers[i] == nullptr) exit(EXIT_FAILURE);
     }
+
+    // initialize the queues
+    int *controlQueues = new int [nQueues];
+    for (int j = 0; j < nQueues; ++j) {
+        for (int i = 0; i < queueInitialLength; ++i) {
+            firstProcess = availableQueues[j]->getFirstProcess();
+            lastProcess = availableQueues[j]->getLastProcess();
+            int addProcess = insert(&firstProcess, &lastProcess, i+j);
+
+            if (addProcess == -1) {
+                std::cout << "Error adding new process... Exiting..." << std::endl;
+                exit(0);
+            }
+
+            if (outputLevel == 0) std::cout << "Process added successfully" << std::endl;
+
+            controlQueues[j] += 1;
+            availableQueues[j]->setFirstProcess(firstProcess);
+            availableQueues[j]->setLastProcess(lastProcess);
+        }
+    }
+
 
     // cada passo da simulacao (a cada "segundo")
     for (int time = 0; time < nSteps; ++time) {
@@ -81,7 +100,7 @@ int main(int argc, char *argv[]) {
 
             if (outputLevel == 0) std::cout << "Q" << j << " now have new processes" << std::endl;
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 
 
