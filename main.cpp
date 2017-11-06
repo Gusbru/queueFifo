@@ -48,24 +48,37 @@ int main(int argc, char *argv[]) {
 
     // initialize the queues
     int *controlQueues = new int [nQueues];
+    int countProcess = 0;
     for (int j = 0; j < nQueues; ++j) {
         for (int i = 0; i < queueInitialLength; ++i) {
             firstProcess = availableQueues[j]->getFirstProcess();
             lastProcess = availableQueues[j]->getLastProcess();
             int addProcess = insert(&firstProcess, &lastProcess, i+j);
+            countProcess++;
 
             if (addProcess == -1) {
                 std::cout << "Error adding new process... Exiting..." << std::endl;
                 exit(0);
             }
 
-            if (outputLevel == 0) std::cout << "Process added successfully" << std::endl;
+            if (outputLevel == 0) std::cout << "Process " << countProcess << " added successfully" << std::endl;
 
             controlQueues[j] += 1;
             availableQueues[j]->setFirstProcess(firstProcess);
             availableQueues[j]->setLastProcess(lastProcess);
         }
     }
+
+
+    // record the initial time
+    time_t initialTime;
+    std::time(&initialTime);
+
+    // store the number of process executed
+    int numberOfProcess = 0;
+
+    // total time in the queue
+    double timeInQueue = 0;
 
 
     // cada passo da simulacao (a cada "segundo")
@@ -75,11 +88,13 @@ int main(int argc, char *argv[]) {
         // Para cada uma das filas, create new processes (pode ser diferente para cada fila)
         for (int j = 0; j < nQueues; ++j) {
 
+            firstProcess = availableQueues[j]->getFirstProcess();
+            lastProcess = availableQueues[j]->getLastProcess();
+
+            // create process
             for (int k = 0; k < processCreationRate; ++k) {
                 if (outputLevel == 0) std::cout << "creating " << k << std::endl;
 
-                firstProcess = availableQueues[j]->getFirstProcess();
-                lastProcess = availableQueues[j]->getLastProcess();
                 int addProcess = insert(&firstProcess, &lastProcess, k+j);
 
                 if (addProcess == -1) {
@@ -98,7 +113,11 @@ int main(int argc, char *argv[]) {
             }
 
 
-            if (outputLevel == 0) std::cout << "Q" << j << " now have new processes" << std::endl;
+            if (outputLevel == 0) {
+                if (processCreationRate > 0)
+                    std::cout << "Q" << j << " now have new processes" << std::endl;
+            }
+
 
             //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
@@ -109,9 +128,7 @@ int main(int argc, char *argv[]) {
             // server request
             for (int k = 0; k < processDestructionRate; ++k) {
 
-                if (outputLevel == 0) std::cout << "destructing " << k << std::endl;
-
-                firstProcess = availableServers[j]->getProcessToServe();
+                if (outputLevel == 0) std::cout << "destructing process " << k << " for queue id = " << j << std::endl;
 
                 if (firstProcess != nullptr) {
                     int processId = firstProcess->getId();
@@ -126,6 +143,10 @@ int main(int argc, char *argv[]) {
                         std::cout << "Error removing process... Exiting..." << std::endl;
                         exit(0);
                     }
+
+                    // update the number of process processed and the total time
+                    numberOfProcess++;
+                    timeInQueue += lifetime;
 
                     if (outputLevel == 0) std::cout << "Process removed successfully" << std::endl;
                     availableQueues[j]->setFirstProcess(firstProcess);
@@ -154,7 +175,16 @@ int main(int argc, char *argv[]) {
         std::cout << "********************************************************************" << std::endl << std::endl;
     }
 
-    std::cout << "Program finished!" << std::endl;
+    std::cout << "********************************************************************" << std::endl;
+    std::cout << "***************************** STATISTICS ***************************" << std::endl;
+    std::cout << "We consumed " << numberOfProcess << " process" << std::endl;
+    std::cout << "Total time = " << timeInQueue << " seconds" << std::endl;
+    std::cout << "Average time in queue = " << timeInQueue/numberOfProcess << " seconds/process" << std::endl;
+    std::cout << "********************************************************************" << std::endl;
+    std::cout << std::endl;
+    std::cout << "********************************************************************" << std::endl;
+    std::cout << "*                     Program finished!                            *" << std::endl;
+    std::cout << "********************************************************************" << std::endl;
 
     return 0;
 }
