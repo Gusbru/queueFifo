@@ -1,8 +1,12 @@
 //
 // Nome: Gutavo Brunetto RA: 17733320
 // Opcionais Funcionando:
-//      0. Projeto Basico - 5.0 pontos
-//      1.
+//      0. Projeto Basico                                - 5.0 pontos
+//      1. Usuário pode especificar numero de servidores - 1.0 ponto
+//      7. Chegada de clientes na fila obedece Poisson   - 2.0 pontos
+//      8. Execução do sistema acelerada                 - 2.0 pontos
+//      -------------------------------------------------------------
+//                                                        10.0 pontos
 //
 
 #include <iostream>
