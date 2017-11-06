@@ -13,4 +13,4 @@ the same as the number of queues)
 - `processCreationRate`: 
 - `processDestructionRate`:
 - `queueInitialLength`:
-- `outputLevel`:
+- `outputLevel`: 0 for debug mode / 1 for normal mode

@@ -19,6 +19,7 @@
 #include "Servers.h"
 #include "Input.h"
 #include "Output.h"
+#include "RandomNumber.h"
 
 int main(int argc, char *argv[]) {
 
@@ -84,6 +85,9 @@ int main(int argc, char *argv[]) {
     // total time in the queue
     double timeInQueue = 0;
 
+    // random number vector
+    double *randomNumber = RandomNumber(2, nQueues*nSteps, 0.0, 1.0).getRand();
+
 
     // cada passo da simulacao (a cada "segundo")
     for (int time = 0; time < nSteps; ++time) {
@@ -94,6 +98,8 @@ int main(int argc, char *argv[]) {
 
             firstProcess = availableQueues[j]->getFirstProcess();
             lastProcess = availableQueues[j]->getLastProcess();
+
+            std::cout << randomNumber[j] << std::endl;
 
             // create process
             for (int k = 0; k < processCreationRate; ++k) {
