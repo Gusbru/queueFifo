@@ -38,10 +38,12 @@ int main(int argc, char *argv[]) {
     int processDestructionRate = input.getProcessDestructionRate();     // how many process to be processed in a specific queue per second (minimum 1)
     int queueInitialLength = input.getQueueInitialLength();
     int outputLevel = input.getOutputLevel();
+    bool fastTrack = input.getFastTrack();
 
     Output output;
 
-    PoissonDistribution *poissonDistribution = new PoissonDistribution(processCreationRate);
+    PoissonDistribution *poissonDistributionCreate = new PoissonDistribution(processCreationRate);
+    PoissonDistribution *poissonDistributionDestruction = new PoissonDistribution(processDestructionRate);
 
     // Creating an array for queues and servers (nQueues == nServers)
     Queues **availableQueues = new Queues *[nQueues];
@@ -59,7 +61,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < queueInitialLength; ++i) {
             firstProcess = availableQueues[j]->getFirstProcess();
             lastProcess = availableQueues[j]->getLastProcess();
-            int addProcess = insert(&firstProcess, &lastProcess, i+j);
+            int addProcess = insert(&firstProcess, &lastProcess, i+j, 0);
             countProcess++;
 
             if (addProcess == -1) {
@@ -100,7 +102,9 @@ int main(int argc, char *argv[]) {
 
     // cada passo da simulacao (a cada "segundo")
     for (int time = 0; time < nSteps; ++time) {
-        std::cout << "******************* STEP = " << time << " *****************************" << std::endl;
+
+        if(!fastTrack)
+            std::cout << "******************* STEP = " << time << " *****************************" << std::endl;
 
         // Para cada uma das filas, create new processes (pode ser diferente para cada fila)
         for (int j = 0; j < nQueues; ++j) {
@@ -112,10 +116,10 @@ int main(int argc, char *argv[]) {
             // determining the creationRate based in the Poisson Distribution
             stepQueue++;
             int kPoissonProcess = 0;
-            double sumProbabilityProcess = poissonDistribution->getPk(kPoissonProcess);
+            double sumProbabilityProcess = poissonDistributionCreate->getPk(kPoissonProcess);
             while (sumProbabilityProcess < randomNumberProcess[stepQueue]){
                 kPoissonProcess++;
-                sumProbabilityProcess += poissonDistribution->getPk(kPoissonProcess);
+                sumProbabilityProcess += poissonDistributionCreate->getPk(kPoissonProcess);
             }
 
 
@@ -123,7 +127,7 @@ int main(int argc, char *argv[]) {
             for (int k = 0; k < kPoissonProcess; ++k) {
                 if (outputLevel == 0) std::cout << "creating " << k << std::endl;
 
-                int addProcess = insert(&firstProcess, &lastProcess, k+j);
+                int addProcess = insert(&firstProcess, &lastProcess, k+j, time);
 
                 if (addProcess == -1) {
                    std::cout << "Error adding new process... Exiting..." << std::endl;
@@ -153,10 +157,10 @@ int main(int argc, char *argv[]) {
             // determining the destructionRate based in the Poisson Distribution
             stepServer++;
             int kPoissonServer = 0;
-            double sumProbabilityServer = poissonDistribution->getPk(kPoissonServer);
+            double sumProbabilityServer = poissonDistributionDestruction->getPk(kPoissonServer);
             while (sumProbabilityServer < randomNumberServer[stepServer]){
                 kPoissonServer++;
-                sumProbabilityServer += poissonDistribution->getPk(kPoissonServer);
+                sumProbabilityServer += poissonDistributionDestruction->getPk(kPoissonServer);
             }
 
 
@@ -168,10 +172,19 @@ int main(int argc, char *argv[]) {
 
                 if (firstProcess != nullptr) {
                     int processId = firstProcess->getId();
-                    // pegar o tempo na remocao
-                    time_t removalTime;
-                    std::time(&removalTime);
-                    double lifetime = difftime(removalTime, firstProcess->getCreationTime());
+
+                    double lifetime;
+                    if(!fastTrack){
+                        // pegar o tempo na remocao (fastTrack desligado)
+                        time_t removalTime;
+                        std::time(&removalTime);
+                        lifetime = difftime(removalTime, firstProcess->getCreationTime());
+                    } else {
+                        // fastTrack ligado
+                        int removalStep = time;
+                        lifetime = removalStep - firstProcess->getCreationStep();
+                    }
+
 
                     int removeProcess = remove(&firstProcess);
 
@@ -192,7 +205,8 @@ int main(int argc, char *argv[]) {
                     controlQueues[j] -= 1;
                     if (outputLevel == 0) std::cout << "server id = " << j << " removed the process id = " << removeProcess << " from queue id = " << availableQueues[j]->getId() << " process lifetime = " << lifetime << std::endl;
                 } else {
-                    std::cout << "Queue " << j << " already empty..." << std::endl;
+                    if(k == 0 && !fastTrack)
+                        std::cout << "Queue " << j << " already empty..." << std::endl;
                 }
 
 
@@ -204,22 +218,26 @@ int main(int argc, char *argv[]) {
 
         }
 
-        output.printQueuesLength(controlQueues, nQueues);
+        if(!fastTrack) {
+            output.printQueuesLength(controlQueues, nQueues);
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::cout << "********************************************************************" << std::endl << std::endl;
+        }
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        std::cout << "********************************************************************" << std::endl << std::endl;
     }
 
     std::cout << "********************************************************************" << std::endl;
-    std::cout << "***************************** STATISTICS ***************************" << std::endl;
+    std::cout << "**                            STATISTICS                          **" << std::endl;
+    std::cout << "********************************************************************" << std::endl;
     std::cout << "We consumed " << numberOfProcess << " process" << std::endl;
     std::cout << "Total time = " << timeInQueue << " seconds" << std::endl;
     std::cout << "Average time in queue = " << timeInQueue/numberOfProcess << " seconds/process" << std::endl;
     std::cout << "********************************************************************" << std::endl;
     std::cout << std::endl;
     std::cout << "********************************************************************" << std::endl;
-    std::cout << "*                     Program finished!                            *" << std::endl;
+    std::cout << "**                    Program finished!                           **" << std::endl;
     std::cout << "********************************************************************" << std::endl;
 
     return 0;

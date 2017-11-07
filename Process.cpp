@@ -4,9 +4,10 @@
 
 #include "Process.h"
 
-Process::Process(int id, time_t creationTime, Process *next) {
+Process::Process(int id, time_t creationTime, int creationStep, Process *next) {
     this->id = id;
     this->creationTime = creationTime;
+    this->creationStep = creationStep;
     this->next = next;
 
 }

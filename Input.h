@@ -15,6 +15,7 @@ public:
     int getProcessDestructionRate();
     int getOutputLevel();
     int getQueueInitialLength();
+    bool getFastTrack();
 
 private:
     int nServers;
@@ -24,6 +25,7 @@ private:
     int processDestructionRate;
     int queueInitialLength;
     int outputLevel;
+    bool fastTrack;
 };
 
 

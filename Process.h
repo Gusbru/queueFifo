@@ -11,7 +11,7 @@
 class Process {
 public:
     Process();
-    Process(int id, time_t creationTime, Process *next);
+    Process(int id, time_t creationTime, int creationStep, Process *next);
     ~Process();
 
     // setters
@@ -20,12 +20,14 @@ public:
     // getters
     int getId() { return this->id; };
     time_t getCreationTime() { return this->creationTime; };
+    int getCreationStep() { return this->creationStep; }
     Process *getNext() { return this->next; };
 
 
 private:
     int id;
     time_t creationTime;
+    int creationStep;
     Process *next;
 
 };

@@ -1,8 +1,8 @@
 {
   "nServers" : 10,
-  "nSteps" : 10,
-  "processCreationRate" : 4,
-  "processDestructionRate" : 3,
+  "nSteps" : 3600,
+  "processCreationRate" : 5,
+  "processDestructionRate" : 4,
   "queueInitialLength" : 7,
   "outputLevel" : 1,
   "fastTrack" : true

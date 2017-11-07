@@ -4,14 +4,14 @@
 
 #include "Insert.h"
 
-int insert(Process **firsProcess, Process **lastProcess, int id) {
+int insert(Process **firsProcess, Process **lastProcess, int id, int creationStep) {
 
     time_t creationTime;
     time(&creationTime);
 
     // start an empty queue
     if ((*firsProcess) == nullptr) {
-        (*firsProcess) = new Process(id, creationTime, nullptr);
+        (*firsProcess) = new Process(id, creationTime, creationStep, nullptr);
         if ((*firsProcess) == nullptr) return -1;
         (*lastProcess) = (*firsProcess);
 
@@ -20,7 +20,7 @@ int insert(Process **firsProcess, Process **lastProcess, int id) {
 
     // queue is not empty
     Process *tmp = (*lastProcess);
-    (*lastProcess) = new Process(id, creationTime, nullptr);
+    (*lastProcess) = new Process(id, creationTime, creationStep, nullptr);
     if((*lastProcess) == nullptr) return -1;
     tmp->setNext((*lastProcess));
 

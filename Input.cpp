@@ -43,6 +43,9 @@ void Input::getInp(char *input) {
     assert(d.HasMember("outputLevel"));
     assert(d["outputLevel"].IsInt());
 
+    assert(d.HasMember("fastTrack"));
+    assert(d["fastTrack"].IsBool());
+
     nServers = d["nServers"].GetInt();
     nQueues = nServers;
     nSteps = d["nSteps"].GetInt();
@@ -50,6 +53,7 @@ void Input::getInp(char *input) {
     processDestructionRate = d["processDestructionRate"].GetInt();
     queueInitialLength = d["queueInitialLength"].GetInt();
     outputLevel = d["outputLevel"].GetInt();
+    fastTrack = d["fastTrack"].GetBool();
 
 }
 
@@ -81,3 +85,6 @@ int Input::getQueueInitialLength() {
     return queueInitialLength;
 }
 
+bool Input::getFastTrack() {
+    return fastTrack;
+}

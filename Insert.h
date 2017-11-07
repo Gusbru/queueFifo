@@ -8,7 +8,7 @@
 
 #include "Process.h"
 
-int insert(Process **firsProcess, Process **lastProcess, int id);
+int insert(Process **firsProcess, Process **lastProcess, int id, int creationStep);
 
 
 
