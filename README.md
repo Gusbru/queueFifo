@@ -10,7 +10,9 @@ The available options are:
 implementation the number of servers is going to be
 the same as the number of queues)
 - `nSteps`: number of steps
-- `processCreationRate`: 
-- `processDestructionRate`:
-- `queueInitialLength`:
+- `processCreationRate`: number of process to be created at each second (step)
+- `processDestructionRate`: number of process consumed at each second (step)
+- `queueInitialLength`: initial queue length (same for all the queues)
 - `outputLevel`: 0 for debug mode / 1 for normal mode
+- `fastTrack` : `true` run long simulations (large number of steps) very fast.
+`false` each step (second) will take 1 second
