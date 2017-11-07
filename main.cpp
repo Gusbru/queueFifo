@@ -20,6 +20,7 @@
 #include "Input.h"
 #include "Output.h"
 #include "RandomNumber.h"
+#include "PoissonDistribution.h"
 
 int main(int argc, char *argv[]) {
 
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     Output output;
 
-
+    PoissonDistribution *poissonDistribution = new PoissonDistribution(processCreationRate);
 
     // Creating an array for queues and servers (nQueues == nServers)
     Queues **availableQueues = new Queues *[nQueues];
@@ -85,9 +86,17 @@ int main(int argc, char *argv[]) {
     // total time in the queue
     double timeInQueue = 0;
 
-    // random number vector
-    double *randomNumber = RandomNumber(2, nQueues*nSteps, 0.0, 1.0).getRand();
+    // random number vector for process and servers
+    int seed;
 
+    seed = 2;
+    double *randomNumberProcess = RandomNumber(seed, nQueues*nSteps, 0.0, 1.0).getRand();
+
+    seed = 7;
+    double *randomNumberServer = RandomNumber(seed, nServers*nSteps, 0.0, 1.0).getRand();
+
+    int stepQueue = 0;
+    int stepServer = 0;
 
     // cada passo da simulacao (a cada "segundo")
     for (int time = 0; time < nSteps; ++time) {
@@ -99,10 +108,19 @@ int main(int argc, char *argv[]) {
             firstProcess = availableQueues[j]->getFirstProcess();
             lastProcess = availableQueues[j]->getLastProcess();
 
-            std::cout << randomNumber[j] << std::endl;
+
+            // determining the creationRate based in the Poisson Distribution
+            stepQueue++;
+            int kPoissonProcess = 0;
+            double sumProbabilityProcess = poissonDistribution->getPk(kPoissonProcess);
+            while (sumProbabilityProcess < randomNumberProcess[stepQueue]){
+                kPoissonProcess++;
+                sumProbabilityProcess += poissonDistribution->getPk(kPoissonProcess);
+            }
+
 
             // create process
-            for (int k = 0; k < processCreationRate; ++k) {
+            for (int k = 0; k < kPoissonProcess; ++k) {
                 if (outputLevel == 0) std::cout << "creating " << k << std::endl;
 
                 int addProcess = insert(&firstProcess, &lastProcess, k+j);
@@ -132,11 +150,19 @@ int main(int argc, char *argv[]) {
             //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 
+            // determining the destructionRate based in the Poisson Distribution
+            stepServer++;
+            int kPoissonServer = 0;
+            double sumProbabilityServer = poissonDistribution->getPk(kPoissonServer);
+            while (sumProbabilityServer < randomNumberServer[stepServer]){
+                kPoissonServer++;
+                sumProbabilityServer += poissonDistribution->getPk(kPoissonServer);
+            }
 
 
             // Para cada um dos servidores, executa os processos correspondentes
             // server request
-            for (int k = 0; k < processDestructionRate; ++k) {
+            for (int k = 0; k < kPoissonServer; ++k) {
 
                 if (outputLevel == 0) std::cout << "destructing process " << k << " for queue id = " << j << std::endl;
 
@@ -166,7 +192,7 @@ int main(int argc, char *argv[]) {
                     controlQueues[j] -= 1;
                     if (outputLevel == 0) std::cout << "server id = " << j << " removed the process id = " << removeProcess << " from queue id = " << availableQueues[j]->getId() << " process lifetime = " << lifetime << std::endl;
                 } else {
-                    std::cout << "Queue already empty..." << std::endl;
+                    std::cout << "Queue " << j << " already empty..." << std::endl;
                 }
 
 
